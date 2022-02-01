@@ -115,8 +115,6 @@ class Listener:
             self.stream.stop_stream()
             print("\n Stopped listening! \n")
 
-
-
         @staticmethod
         def save(filename, buffer):
             with wave.open(filename, 'wb') as wf:
@@ -136,7 +134,7 @@ class onlineSession:
         self.buffer_chunk = []
         self.user_id = getRandomUserID(7)
         self.sentIdx = 0
-        self.lang = 'en-In'
+        self.lang = 'en-IN'
 
     def audioIterator(self):
         self.stream.start_listening(self.buffer)
@@ -175,8 +173,7 @@ class onlineSession:
             transcript = json.loads(response.transcription)
             if 'transcription' in transcript:
                  self.transcript = transcript['transcription']
-                 print(self.transcript)
-            print(transcript)
+                 print(self.transcript, end = '\r')
 
     def startTranscription(self, stub):
         thread = threading.Thread(target=self.requestIterator, args=(stub,), daemon=True, name = 'grpc request iterator')
@@ -212,11 +209,14 @@ def testPunctuation():
 
 #*-*-*         main         *-*-*#
 
-#stub = getStub()
-session = onlineSession()
-cache = []
-session.startTest(cache)
-time.sleep(5)
-session.stopTranscription()
+if __name__ == "__main__":
+    
+    stub = getStub()
+    session = onlineSession()
+    session.startTranscription(stub)
+    # cache = []
+    # session.startTest(cache)
+    time.sleep(5)
+    session.stopTranscription()
 
-Listener.save('./wavs/alt_buff.wav', session.buffer_chunk)
+    Listener.save('./wavs/alt_buff.wav', session.buffer_chunk)
