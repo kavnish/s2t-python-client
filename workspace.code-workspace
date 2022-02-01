@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../online_decoding/fairseq/notebooks"
+		}
+	],
+	"settings": {}
+}
