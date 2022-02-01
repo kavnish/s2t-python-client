@@ -9,6 +9,7 @@ import random
 import json
 from client.infer_pb2_grpc import RecognizeStub
 from client.infer_pb2 import PunctuateRequest, Message, PunctuateResponse, SRTRequest, SRTResponse, Response
+import webrtcvad
 
 
 #*-*-*         GRPC Client         *-*-*#
@@ -127,14 +128,17 @@ class Listener:
 
 class onlineSession:
 
-    def __init__(self):
-        self.stream = Listener(rate = 16000, chunk = 1024)
+    def __init__(self, rate = 16000):
+        self.stream = Listener(rate = rate, chunk = 1024)
         self.transcript = ''
         self.buffer = []
         self.buffer_chunk = []
         self.user_id = getRandomUserID(7)
         self.sentIdx = 0
         self.lang = 'en-IN'
+        self.vad = webrtcvad.Vad(2)
+        self.rate = rate
+
 
     def audioIterator(self):
         self.stream.start_listening(self.buffer)
@@ -146,11 +150,12 @@ class onlineSession:
             self.sentIdx = len(self.buffer)
             if self.stream.stream.is_active() == False and len(frames) == 0: done = True 
             self.buffer_chunk.append(frames)
+            speaking = True #vad.is_speech(frames, self.rate)
             message = {
                     'audio':frames,
                     'user':self.user_id,
                     'language':self.lang,
-                    'speaking':True,
+                    'speaking':speaking,
                     'isEnd':False if not done else True
                 }
             message = Message(**message)
@@ -186,7 +191,6 @@ class onlineSession:
         self.stream.save(filename, self.buffer)
         return 
 
-
 def testOffline():
     stub = getStub()
     file_path = 'demo.wav'
@@ -210,7 +214,7 @@ def testPunctuation():
 #*-*-*         main         *-*-*#
 
 if __name__ == "__main__":
-    
+
     stub = getStub()
     session = onlineSession()
     session.startTranscription(stub)
