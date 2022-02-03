@@ -1,7 +1,8 @@
 import pygame
 import sys
 import time
-from demo import Listener, onlineSession, getStub
+from onlineSession import onlineSession
+from grpc_utils import getStub
 import textwrap
 
 # initializing the constructor

@@ -1,2 +1,6 @@
 tmp/
 wavs/
+__pycache__/
+
+.ipynb_checkpoints/
+notebook.ipynb
