@@ -1,12 +1,17 @@
 import pyaudio
 import string
 import random
+import json
 
 
 def readWAVFile(path):
         with open(path, 'rb') as f:
             arr = f.read()
         return arr 
+
+def writeJSON(path, data):
+    with open(path, 'w') as f:
+        json.dumps(data)
 
 
 def getStream(rate = 16000, chunk = 4096):

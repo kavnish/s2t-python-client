@@ -1,7 +1,6 @@
 
 from Listener import Listener
-from utils import getRandomUserID
-import webrtcvad
+from utils import getRandomUserID, writeJSON
 import time
 import threading
 import json
@@ -22,13 +21,11 @@ class onlineSession:
         self.rate = rate
         self.last_n_frames = []
 
-
-
     def isSpeaking(self, frames, n = 1):
         last_n_frames = self.last_n_frames
         frame_mean = sum(sorted([frame for frame in frames])[:int(0.25 * len(frames))])/len(frames)
         if len(last_n_frames) == n:
-            last_n_frames.pop()
+            last_n_frames.pop(0)
             last_n_frames.append(frame_mean)
             speaking = True if sum(last_n_frames)/n > 0 else False
 
@@ -63,7 +60,9 @@ class onlineSession:
                     'isEnd':False if not done else True
                 }
 
-            message = Message(**message)
+            writeJSON(message, './wavs/' + str(time.time()) + self.user_id + '.json')
+            
+            #message = Message(**message)
             if sendOnce or speaking:
                 if not speaking: sendOnce = False
                 yield message 

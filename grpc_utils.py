@@ -1,5 +1,4 @@
 
-import webrtcvad
 import grpc
 from client.infer_pb2_grpc import RecognizeStub
 from client.infer_pb2 import PunctuateRequest, Message, PunctuateResponse, SRTRequest, SRTResponse, Response
@@ -7,7 +6,7 @@ from client.infer_pb2 import PunctuateRequest, Message, PunctuateResponse, SRTRe
 from utils import readWAVFile
 
 def getStub():
-      channel = grpc.insecure_channel('10.140.102.229:5001')
+      channel = grpc.insecure_channel('localhost:5000')
       stub = RecognizeStub(channel)
       return stub
 
